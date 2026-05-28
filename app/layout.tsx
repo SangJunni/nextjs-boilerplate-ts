@@ -1,10 +1,28 @@
-// app/layout.tsx
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
+import { Inter, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
+})
+
 export const metadata: Metadata = {
-  title: "Next.js Boilerplate",
-  description: "Next.js 16 쨌 Tailwind CSS v4 쨌 shadcn/ui 쨌 Auth.js 쨌 Prisma 쨌 Neon",
+  title: "Moments | Daily Photo Timeline",
+  description: "Capture and share your daily moments with friends. A thoughtful way to document life.",
+}
+
+export const viewport: Viewport = {
+  themeColor: "#fcf9f5",
+  width: "device-width",
+  initialScale: 1,
 }
 
 export default function RootLayout({
@@ -13,8 +31,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">{children}</body>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} bg-background`}>
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="min-h-screen bg-background text-on-surface antialiased">
+        {children}
+      </body>
     </html>
   )
 }
