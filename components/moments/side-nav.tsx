@@ -2,7 +2,9 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { cn } from "@/lib/utils"
+import { getMomentsUserProfile } from "@/lib/profile"
 
 const navItems = [
   { href: "/", label: "Timeline", icon: "auto_awesome_motion" },
@@ -17,6 +19,8 @@ interface SideNavProps {
 
 export function SideNav({ onPostClick }: SideNavProps) {
   const pathname = usePathname()
+  const { data: session } = useSession()
+  const profile = getMomentsUserProfile(session)
 
   return (
     <aside className="hidden lg:flex flex-col p-6 gap-6 border-r border-outline-variant/30 h-screen w-64 fixed left-0 top-0 bg-surface">
@@ -54,14 +58,22 @@ export function SideNav({ onPostClick }: SideNavProps) {
       {/* User Card */}
       <div className="p-4 bg-surface-container-low rounded-xl">
         <div className="flex items-center gap-3 mb-3">
-          <img
-            alt="Alex Rivers"
-            className="w-10 h-10 rounded-full object-cover"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face"
-          />
+          {profile.avatarUrl ? (
+            <img
+              alt={profile.displayName}
+              className="w-10 h-10 rounded-full object-cover"
+              src={profile.avatarUrl}
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center font-mono text-xs font-bold text-primary">
+              {profile.initials}
+            </div>
+          )}
           <div>
-            <p className="font-mono text-sm font-bold text-primary">Alex Rivers</p>
-            <p className="text-[10px] text-secondary">Current Streak: 12 Days</p>
+            <p className="font-mono text-sm font-bold text-primary">{profile.displayName}</p>
+            <p className="text-[10px] text-secondary truncate max-w-[10rem]">
+              {profile.email || profile.handle}
+            </p>
           </div>
         </div>
         <button

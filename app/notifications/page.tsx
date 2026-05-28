@@ -1,59 +1,66 @@
 "use client"
 
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 import { SideNav, TopNav, BottomNav, UploadModal } from "@/components/moments"
-
-const notifications = [
-  {
-    id: 1,
-    type: "photo" as const,
-    user: {
-      name: "Elena Vance",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
-    },
-    action: "shared a new moment from",
-    target: "Golden Hour in Kyoto",
-    preview: "The light was just perfect this afternoon...",
-    image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=200&h=200&fit=crop",
-    time: "12m ago",
-  },
-  {
-    id: 2,
-    type: "comment" as const,
-    user: {
-      name: "Julian Chen",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
-    },
-    action: "commented on your photo.",
-    comment: "This composition is incredible, Alex. Really captures the mood of the morning.",
-    time: "2h ago",
-  },
-  {
-    id: 3,
-    type: "milestone" as const,
-    title: "Streak Milestone!",
-    description: "You've shared a moment for",
-    highlight: "30 consecutive days",
-    message: "Keep the chronicle alive. Your consistency is building a beautiful story.",
-    time: "5h ago",
-  },
-  {
-    id: 4,
-    type: "photo" as const,
-    user: {
-      name: "Sarah Jenkins",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
-    },
-    action: "posted in",
-    target: "Weekend Travels",
-    preview: "Finally found that hidden cafe everyone was talking about.",
-    image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&h=200&fit=crop",
-    time: "Yesterday",
-  },
-]
+import { getMomentsUserProfile } from "@/lib/profile"
 
 export default function NotificationsPage() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
+  const { data: session } = useSession()
+  const profile = getMomentsUserProfile(session)
+
+  const notifications = [
+    {
+      id: 1,
+      type: "photo" as const,
+      user: {
+        name: "Elena Vance",
+        avatar:
+          "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face",
+      },
+      action: "shared a new moment from",
+      target: "Golden Hour in Kyoto",
+      preview: "The light was just perfect this afternoon...",
+      image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=200&h=200&fit=crop",
+      time: "12m ago",
+    },
+    {
+      id: 2,
+      type: "comment" as const,
+      user: {
+        name: "Julian Chen",
+        avatar:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+      },
+      action: "commented on your photo.",
+      comment: `This composition is incredible, ${profile.displayName}. Really captures the mood of the morning.`,
+      time: "2h ago",
+    },
+    {
+      id: 3,
+      type: "milestone" as const,
+      title: "Streak Milestone!",
+      description: "You've shared a moment for",
+      highlight: "30 consecutive days",
+      message: "Keep the chronicle alive. Your consistency is building a beautiful story.",
+      time: "5h ago",
+    },
+    {
+      id: 4,
+      type: "photo" as const,
+      user: {
+        name: "Sarah Jenkins",
+        avatar:
+          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+      },
+      action: "posted in",
+      target: "Weekend Travels",
+      preview: "Finally found that hidden cafe everyone was talking about.",
+      image: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&h=200&fit=crop",
+      time: "Yesterday",
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-background">

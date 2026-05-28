@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next"
 import { Inter, JetBrains_Mono } from "next/font/google"
 import "./globals.css"
+import { auth } from "@/lib/auth"
+import { Providers } from "@/components/providers"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,11 +27,13 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const session = await auth()
+
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} bg-background`}>
       <head>
@@ -39,7 +43,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen bg-background text-on-surface antialiased">
-        {children}
+        <Providers session={session}>{children}</Providers>
       </body>
     </html>
   )

@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { useSession } from "next-auth/react"
 import { SideNav, TopNav, BottomNav, UploadModal } from "@/components/moments"
+import { getMomentsUserProfile } from "@/lib/profile"
 
 export default function SettingsPage() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
@@ -9,12 +11,14 @@ export default function SettingsPage() {
   const [hideFromDiscovery, setHideFromDiscovery] = useState(false)
   const [stripLocation, setStripLocation] = useState(true)
   const [dailyReminders, setDailyReminders] = useState(false)
+  const { data: session } = useSession()
+  const profile = getMomentsUserProfile(session)
 
-  const [formData, setFormData] = useState({
-    fullName: "Alex Rivera",
-    username: "@arivera_moments",
-    bio: "Capturing the quiet spaces between the big events. Architect by day, photographer by light.",
-  })
+  const [formData, setFormData] = useState(() => ({
+    fullName: profile.displayName,
+    username: profile.handle,
+    bio: "",
+  }))
 
   return (
     <div className="min-h-screen bg-background">
@@ -28,11 +32,17 @@ export default function SettingsPage() {
             <div className="flex items-center gap-6">
               <div className="relative">
                 <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-background shadow-md">
-                  <img
-                    alt="Alex Rivera"
-                    className="w-full h-full object-cover"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face"
-                  />
+                  {profile.avatarUrl ? (
+                    <img
+                      alt={profile.displayName}
+                      className="w-full h-full object-cover"
+                      src={profile.avatarUrl}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-surface-container-high flex items-center justify-center font-mono text-lg font-bold text-primary">
+                      {profile.initials}
+                    </div>
+                  )}
                 </div>
                 <button className="absolute bottom-0 right-0 bg-primary text-on-primary p-1 rounded-full shadow-lg hover:scale-110 transition-transform">
                   <span className="material-symbols-outlined text-sm">edit</span>
@@ -45,25 +55,34 @@ export default function SettingsPage() {
                 <p className="font-mono text-sm text-secondary">
                   Manage your presence on Moments
                 </p>
+                <p className="font-mono text-xs text-secondary mt-1 truncate max-w-sm">
+                  {profile.email || profile.handle}
+                </p>
               </div>
             </div>
             <div className="hidden sm:flex gap-10 border-l border-outline-variant pl-10">
               <div className="text-center">
-                <span className="block font-sans text-xl font-medium text-primary">128</span>
+                <span className="block font-sans text-lg font-medium text-primary max-w-[10rem] truncate">
+                  {profile.displayName}
+                </span>
                 <span className="block font-mono text-xs text-secondary uppercase tracking-wider">
-                  Moments
+                  Display Name
                 </span>
               </div>
               <div className="text-center">
-                <span className="block font-sans text-xl font-medium text-primary">14</span>
+                <span className="block font-sans text-lg font-medium text-primary max-w-[10rem] truncate">
+                  {profile.handle}
+                </span>
                 <span className="block font-mono text-xs text-secondary uppercase tracking-wider">
-                  Day Streak
+                  Username
                 </span>
               </div>
               <div className="text-center">
-                <span className="block font-sans text-xl font-medium text-primary">2.4k</span>
+                <span className="block font-sans text-lg font-medium text-primary max-w-[10rem] truncate">
+                  {profile.email || "Google account"}
+                </span>
                 <span className="block font-mono text-xs text-secondary uppercase tracking-wider">
-                  Reach
+                  Email
                 </span>
               </div>
             </div>
